@@ -501,27 +501,6 @@ sdk.Logger = (level, message) =>
 };
 ```
 
-## ⚙️ Requirements
-
-### System Requirements
-
-**Minimum:**
-- **OS**: Windows 10+, macOS 12+, or Linux (Ubuntu 20.04+, Debian 11+)
-- **.NET**: 8.0 or higher
-- **SharpAI Server**: Running SharpAI server instance
-
-**SharpAI Server Requirements:**
-- **RAM**: Minimum 8GB of RAM recommended
-- **Disk**: 20GB+ of disk space for models
-- **Internet**: Required for downloading models
-- **HuggingFace API Key**: Required (free at https://huggingface.co/settings/tokens)
-
-### Dependencies
-
-- **SharpAI**: Core SharpAI library (v1.0.14+)
-- **RestWrapper**: HTTP client wrapper (v3.1.8+)
-- **System.Text.Json**: JSON serialization (v9.0.9+)
-
 ## 📊 Version History
 
 Please see the [CHANGELOG.md](CHANGELOG.md) file for detailed version history and release notes.
@@ -529,18 +508,3 @@ Please see the [CHANGELOG.md](CHANGELOG.md) file for detailed version history an
 ## 📄 License
 
 This project is licensed under the MIT License.
-
-## 🙏 Acknowledgments
-
-- Built on [SharpAI](https://github.com/jchristn/sharpai) for local AI inference
-- Compatible with [Ollama](https://ollama.ai/) API standards
-- Compatible with [OpenAI](https://openai.com/) API standards
-
-## 🔗 Related Projects
-
-- [SharpAI](https://github.com/jchristn/sharpai) - The core SharpAI library and server
-- [RestWrapper](https://github.com/jchristn/RestWrapper) - HTTP client wrapper library
-
----
-
-**Have a bug, feature request, or idea?** Please [file an issue](https://github.com/jchristn/sharpai/issues) on our GitHub repository. We welcome community input on our roadmap!
