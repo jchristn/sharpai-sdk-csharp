@@ -2,9 +2,9 @@
   <img src="https://github.com/jchristn/sharpai/blob/main/assets/logo.png" width="256" height="256">
 </div>
 
-# SharpAI
+# SharpAI.Sdk
 
-**Transform your .NET applications into AI powerhouses - embed models directly or deploy as an Ollama-compatible and OpenAI-compatible API server. No cloud dependencies, no limits, just local embeddings and inference.**
+**A C# SDK for interacting with SharpAI server instances - providing Ollama and OpenAI compatible API wrappers for local AI inference.**
 
 <p align="center">
   <img src="https://img.shields.io/badge/.NET-5C2D91?style=for-the-badge&logo=.net&logoColor=white" />
@@ -13,397 +13,493 @@
 </p>
 
 <p align="center">
-  <a href="https://www.nuget.org/packages/SharpAI/">
-    <img src="https://img.shields.io/nuget/v/SharpAI.svg?style=flat" alt="NuGet Version">
+  <a href="https://www.nuget.org/packages/SharpAI.Sdk/">
+    <img src="https://img.shields.io/nuget/v/SharpAI.Sdk.svg?style=flat" alt="NuGet Version">
   </a>
   &nbsp;
-  <a href="https://www.nuget.org/packages/SharpAI">
-    <img src="https://img.shields.io/nuget/dt/SharpAI.svg" alt="NuGet Downloads">
+  <a href="https://www.nuget.org/packages/SharpAI.Sdk">
+    <img src="https://img.shields.io/nuget/dt/SharpAI.Sdk.svg" alt="NuGet Downloads">
   </a>
 </p>
 
 <p align="center">
-  <strong>A .NET library for local AI model inference with Ollama-compatible and OpenAI-compatible REST APIs</strong>
+  <strong>A .NET SDK for SharpAI - Local AI inference with Ollama and OpenAI compatible APIs</strong>
 </p>
 
 <p align="center">
-  Embeddings • Completions • Chat • Built on LlamaSharp • GGUF Models Only
+  Embeddings • Completions • Chat • Model Management • Streaming Support
 </p>
+
+**IMPORTANT** - SharpAI.Sdk assumes you have deployed the SharpAI REST server. If you are integrating a SharpAI library directly into your code, use of this SDK is not necessary.
 
 ---
 
 ## 🚀 Features
 
-- **Ollama and OpenAI Compatible REST API Server** - Provides endpoints compatible with API from Ollama and OpenAI
-- **Model Management** - Download and manage GGUF models from HuggingFace using Ollama APIs
+- **Ollama API Compatibility** - Full support for Ollama API endpoints and models
+- **OpenAI API Compatibility** - Complete OpenAI API compatibility for seamless integration
+- **Model Management** - Download, list, and delete models with streaming progress updates
 - **Multiple Inference Types**:
   - Text embeddings generation
-  - Text completions
-  - Chat completions
-- **Prompt Engineering Tools** - Built-in helpers for formatting prompts for different model types
-- **GPU Acceleration** - Automatic CUDA detection when available
-- **Streaming Support** - Real-time token streaming for completions
-- **SQLite Model Registry** - Tracks model metadata and file information
-
-## 📋 Table of Contents
-
-- [Installation](#-installation)
-- [Core Components](#-core-components)
-- [Model Management](#-model-management)
-- [Generating Embeddings](#-generating-embeddings)
-- [Text Completions](#-text-completions)
-- [Chat Completions](#-chat-completions)
-- [Prompt Formatting](#-prompt-formatting)
-- [API Server](#-api-server)
-- [Requirements](#-requirements)
-- [Version History](#-version-history)
-- [License](#-license)
-- [Acknowledgments](#-acknowledgments)
+  - Text completions (streaming and non-streaming)
+  - Chat completions (streaming and non-streaming)
+- **Streaming Support** - Real-time token streaming for completions and chat
+- **Async/Await Support** - Full async/await support for all operations
+- **Error Handling** - Graceful error handling with detailed logging
+- **Configurable Logging** - Built-in request/response logging capabilities
 
 ## 📦 Installation
 
-Install SharpAI via NuGet:
+Install SharpAI.Sdk via NuGet:
 
 ```bash
-dotnet add package SharpAI
+dotnet add package SharpAI.Sdk
 ```
 
 Or via Package Manager Console:
 
 ```powershell
-Install-Package SharpAI
+Install-Package SharpAI.Sdk
 ```
 
-## 📖 Core Components
+## 🚀 Quick Start
 
-### AIDriver
-
-The main entry point that provides access to all functionality:
+### Basic Usage
 
 ```csharp
-using SharpAI;
-using SyslogLogging;
+using SharpAI.Sdk;
 
-// Initialize the AI driver
-var ai = new AIDriver(
-    logging: new LoggingModule(), 
-    databaseFilename: "./sharpai.db",     
-    huggingFaceApiKey: "hf_xxxxxxxxxxxx", 
-    modelDirectory: "./models/"           
-);
+// Initialize the SDK
+var sdk = new SharpAISdk("http://localhost:8000");
 
-// Download a model from HuggingFace (GGUF format only)
-await ai.Models.Add(
-    name: "QuantFactory/Qwen2.5-3B-GGUF",
-    quantizationPriority: null,
-    progressCallback: (url, bytesDownloaded, percentComplete) =>
-    {
-        Console.WriteLine($"Progress: {percentComplete:P0}");
-    });
+// List available models
+var models = await sdk.Ollama.ListLocalModels();
+Console.WriteLine($"Found {models?.Count ?? 0} models");
 
 // Generate a completion
-string response = await ai.Completion.GenerateCompletion(
-    model: "QuantFactory/Qwen2.5-3B-GGUF",
-    prompt: "Once upon a time",
-    maxTokens: 512,
-    temperature: 0.7f
-);
+var request = new OllamaGenerateCompletionRequest
+{
+    Model = "llama2",
+    Prompt = "The meaning of life is",
+    Options = new OllamaCompletionOptions
+    {
+        Temperature = 0.7f,
+        NumPredict = 100
+    }
+};
+
+var result = await sdk.Ollama.GenerateCompletion(request);
+Console.WriteLine($"Completion: {result?.Response}");
 ```
 
-The AIDriver provides access to APIs via:
-- `ai.Models` - Model management operations
-- `ai.Embeddings` - Embedding generation
-- `ai.Completion` - Text completion generation
-- `ai.Chat` - Chat completion generation
-
-### ModelDriver
-
-Manages model downloads and lifecycle:
+### With Logging
 
 ```csharp
-// List all downloaded models
-List<ModelFile> models = ai.Models.All();
+var sdk = new SharpAISdk("http://localhost:8000");
+sdk.LogRequests = true;
+sdk.LogResponses = true;
+sdk.Logger = (level, message) => Console.WriteLine($"[{level}] {message}");
+```
 
-// Get a specific model
-ModelFile model = ai.Models.GetByName("QuantFactory/Qwen2.5-3B-GGUF");
+## 📖 API Reference
 
-// Download a new model from HuggingFace (GGUF format only)
-ModelFile downloaded = await ai.Models.Add(
-    name: "leliuga/all-MiniLM-L6-v2-GGUF",
-    quantizationPriority: null,
-    progressCallback: null);
+### SharpAISdk Class
+
+The main SDK class that provides access to all functionality.
+
+#### Constructor
+
+```csharp
+public SharpAISdk(string endpoint)
+```
+
+- `endpoint`: SharpAI server endpoint URL
+
+#### Properties
+
+- `Endpoint`: Server endpoint URL
+- `TimeoutMs`: Request timeout in milliseconds (default: 300000)
+- `LogRequests`: Enable request logging
+- `LogResponses`: Enable response logging
+- `Logger`: Custom logger delegate
+
+#### Main API Groups
+
+- `Ollama`: Ollama API methods
+- `OpenAI`: OpenAI API methods
+
+## 🔧 Ollama API Methods
+
+### Model Management
+
+```csharp
+// List local models
+var models = await sdk.Ollama.ListLocalModels();
+
+// Pull a model with streaming progress
+var pullRequest = new OllamaPullModelRequest
+{
+    Model = "llama2"
+};
+
+await foreach (var progress in sdk.Ollama.PullModel(pullRequest))
+{
+    Console.WriteLine($"Status: {progress.Status}");
+    if (progress.IsComplete()) break;
+}
 
 // Delete a model
-ai.Models.Delete("QuantFactory/Qwen2.5-3B-GGUF");
+var deleteRequest = new OllamaDeleteModelRequest
+{
+    Model = "llama2"
+};
+await sdk.Ollama.DeleteModel(deleteRequest);
+```
 
-// Get the filesystem path for a model
-string modelPath = ai.Models.GetFilename("QuantFactory/Qwen2.5-3B-GGUF");
+### Text Completions
+
+```csharp
+// Non-streaming completion
+var request = new OllamaGenerateCompletionRequest
+{
+    Model = "llama2",
+    Prompt = "The future of AI is",
+    Options = new OllamaCompletionOptions
+    {
+        Temperature = 0.7f,
+        NumPredict = 100
+    }
+};
+
+var result = await sdk.Ollama.GenerateCompletion(request);
+Console.WriteLine($"Completion: {result?.Response}");
+
+// Streaming completion
+await foreach (var chunk in sdk.Ollama.GenerateCompletionStream(request))
+{
+    Console.Write(chunk.Response);
+}
+```
+
+### Chat Completions
+
+```csharp
+// Non-streaming chat
+var messages = new List<OllamaChatMessage>
+{
+    new OllamaChatMessage { Role = "user", Content = "Hello, how are you?" }
+};
+
+var chatRequest = new OllamaGenerateChatCompletionRequest
+{
+    Model = "llama2",
+    Messages = messages,
+    Options = new OllamaCompletionOptions
+    {
+        Temperature = 0.7f,
+        NumPredict = 100
+    }
+};
+
+var chatResult = await sdk.Ollama.GenerateChatCompletion(chatRequest);
+Console.WriteLine($"Assistant: {chatResult?.Response}");
+
+// Streaming chat
+await foreach (var chunk in sdk.Ollama.GenerateChatCompletionStream(chatRequest))
+{
+    Console.Write(chunk.Message?.Content);
+}
+```
+
+### Embeddings
+
+```csharp
+// Single text embedding
+var embeddingRequest = new OllamaGenerateEmbeddingsRequest
+{
+    Model = "llama2",
+    Input = "This is a test sentence"
+};
+
+var embeddingResult = await sdk.Ollama.GenerateEmbeddings(embeddingRequest);
+Console.WriteLine($"Embedding dimensions: {embeddingResult?.Embedding?.Length}");
+
+// Multiple text embeddings
+var multipleRequest = new OllamaGenerateEmbeddingsRequest
+{
+    Model = "llama2"
+};
+multipleRequest.SetInputs(new[] { "First text", "Second text", "Third text" });
+
+var multipleResult = await sdk.Ollama.GenerateMultipleEmbeddings(multipleRequest);
+Console.WriteLine($"Generated {multipleResult?.Embeddings?.Count} embeddings");
+```
+
+## 🤖 OpenAI API Methods
+
+### Text Completions
+
+```csharp
+// Non-streaming completion
+var request = new OpenAIGenerateCompletionRequest
+{
+    Model = "llama2",
+    Prompt = "The future of AI is",
+    MaxTokens = 100,
+    Temperature = 0.7f
+};
+
+var result = await sdk.OpenAI.GenerateCompletionAsync(request);
+Console.WriteLine($"Completion: {result?.Choices?[0]?.Text}");
+
+// Streaming completion
+await foreach (var chunk in sdk.OpenAI.GenerateCompletionStreamAsync(request))
+{
+    Console.Write(chunk?.Choices?[0]?.Text);
+}
+```
+
+### Chat Completions
+
+```csharp
+// Non-streaming chat
+var messages = new List<OpenAIChatMessage>
+{
+    new OpenAIChatMessage { Role = "user", Content = "Hello, how are you?" }
+};
+
+var chatRequest = new OpenAIGenerateChatCompletionRequest
+{
+    Model = "llama2",
+    Messages = messages,
+    MaxTokens = 100,
+    Temperature = 0.7f
+};
+
+var result = await sdk.OpenAI.GenerateChatCompletionAsync(chatRequest);
+Console.WriteLine($"Assistant: {result?.Choices?[0]?.Message?.Content}");
+
+// Streaming chat
+await foreach (var chunk in sdk.OpenAI.GenerateChatCompletionStreamAsync(chatRequest))
+{
+    Console.Write(chunk?.Choices?[0]?.Text);
+}
+```
+
+### Embeddings
+
+```csharp
+// Single text embedding
+var embeddingRequest = new OpenAIGenerateEmbeddingsRequest
+{
+    Model = "llama2",
+    Input = "This is a test sentence"
+};
+
+var embeddingResult = await sdk.OpenAI.GenerateEmbeddingsAsync(embeddingRequest);
+Console.WriteLine($"Embedding dimensions: {embeddingResult?.Data?[0]?.Embedding?.Length}");
+
+// Multiple text embeddings
+var multipleRequest = new OpenAIGenerateEmbeddingsRequest
+{
+    Model = "llama2"
+};
+multipleRequest.SetInputs(new[] { "First text", "Second text", "Third text" });
+
+var multipleResult = await sdk.OpenAI.GenerateMultipleEmbeddingsAsync(multipleRequest);
+Console.WriteLine($"Generated {multipleResult?.Data?.Count} embeddings");
 ```
 
 ## 🗄️ Model Management
 
-SharpAI automatically handles downloading GGUF files from HuggingFace. Only GGUF format models are supported.
+SharpAI.Sdk provides comprehensive model management capabilities:
 
-- Queries available GGUF files for a model
-- Selects appropriate quantization based on file naming conventions
-- Downloads and stores models with metadata
-- Tracks model information in local Sqlite model registry
-
-Model metadata includes:
-
-- Model name and GUID
-- File size and hashes (MD5, SHA1, SHA256)
-- Quantization type
-- Source URL
-- Creation timestamps
-
-## 🔢 Generating Embeddings
-
-Generate vector embeddings for text:
+### Pulling Models
 
 ```csharp
-// Single text embedding
-float[] embedding = await ai.Embeddings.Generate(
-    model: "leliuga/all-MiniLM-L6-v2-GGUF",
-    input: "This is a sample text"
-);
-
-// Multiple text embeddings
-string[] texts = { "First text", "Second text", "Third text" };
-float[][] embeddings = await ai.Embeddings.Generate(
-    model: "leliuga/all-MiniLM-L6-v2-GGUF",
-    inputs: texts
-);
-```
-
-## 📝 Text Completions
-
-> *Note*: for best results, structure your prompt in a manner appropriate for the model you are using.  See the prompt formatting section below.
-
-Generate text continuations:
-
-```csharp
-// Non-streaming completion
-string completion = await ai.Completion.GenerateCompletion(
-    model: "QuantFactory/Qwen2.5-3B-GGUF",
-    prompt: "The meaning of life is",
-    maxTokens: 512,
-    temperature: 0.7f
-);
-
-// Streaming completion
-await foreach (string token in ai.Completion.GenerateCompletionStreaming(
-    model: "QuantFactory/Qwen2.5-3B-GGUF",
-    prompt: "Write a poem about",
-    maxTokens: 512,
-    temperature: 0.8f))
+var pullRequest = new OllamaPullModelRequest
 {
-    Console.Write(token);
+    Model = "TheBloke/Llama-2-7B-Chat-GGUF"
+};
+
+Console.WriteLine("Downloading model with progress updates...");
+await foreach (var progress in sdk.Ollama.PullModel(pullRequest))
+{
+    if (!string.IsNullOrEmpty(progress.Status))
+    {
+        Console.Write($"\rStatus: {progress.Status}");
+        
+        if (progress.Downloaded.HasValue && progress.Percent.HasValue)
+        {
+            var percentage = progress.GetProgressPercentage();
+            var progressStr = progress.GetFormattedProgress();
+            Console.Write($" - {progressStr}");
+        }
+    }
+    
+    if (progress.IsComplete())
+    {
+        Console.WriteLine($"\nDownload completed: {progress.Status}");
+        break;
+    }
+    
+    if (progress.HasError())
+    {
+        Console.WriteLine($"\nError: {progress.Error}");
+        break;
+    }
 }
 ```
 
-## 💬 Chat Completions
-
-> *Note*: for best results, structure your prompt in a manner appropriate for the model you are using.  See the prompt formatting section below.
-
-Generate conversational responses:
+### Listing Models
 
 ```csharp
-// Non-streaming chat
-string response = await ai.Chat.GenerateCompletion(
-    model: "QuantFactory/Qwen2.5-3B-GGUF",
-    prompt: chatFormattedPrompt,  // Prompt should be formatted for chat
-    maxTokens: 512,
-    temperature: 0.7f
-);
-
-// Streaming chat
-await foreach (string token in ai.Chat.GenerateCompletionStreaming(
-    model: "QuantFactory/Qwen2.5-3B-GGUF",
-    prompt: chatFormattedPrompt,
-    maxTokens: 512,
-    temperature: 0.7f))
+var models = await sdk.Ollama.ListLocalModels();
+if (models != null && models.Count > 0)
 {
-    Console.Write(token);
+    Console.WriteLine($"Found {models.Count} models:");
+    foreach (var model in models)
+    {
+        Console.WriteLine($"  - {model.Name} (Size: {model.Size} bytes)");
+        if (model.Details != null)
+        {
+            Console.WriteLine($"    Format: {model.Details.Format}");
+            Console.WriteLine($"    Family: {model.Details.Family}");
+            Console.WriteLine($"    Parameter Size: {model.Details.ParameterSize}");
+        }
+    }
 }
 ```
 
-## 🛠️ Prompt Formatting
+## 🌊 Streaming Support
 
-SharpAI includes prompt builders to format conversations for different model types:
+Both Ollama and OpenAI APIs support streaming for real-time token generation:
 
-### Chat Message Formatting
-
-```csharp
-using SharpAI.Prompts;
-
-var messages = new List<ChatMessage>
-{
-    new ChatMessage { Role = "system", Content = "You are a helpful assistant." },
-    new ChatMessage { Role = "user", Content = "What is the capital of France?" },
-    new ChatMessage { Role = "assistant", Content = "The capital of France is Paris." },
-    new ChatMessage { Role = "user", Content = "What is its population?" }
-};
-
-// Format for different model types
-string chatMLPrompt = PromptBuilder.Build(ChatFormat.ChatML, messages);
-/* Output:
-<|im_start|>system
-You are a helpful assistant.<|im_end|>
-<|im_start|>user
-What is the capital of France?<|im_end|>
-<|im_start|>assistant
-The capital of France is Paris.<|im_end|>
-<|im_start|>user
-What is its population?<|im_end|>
-<|im_start|>assistant
-*/
-
-string llama2Prompt = PromptBuilder.Build(ChatFormat.Llama2, messages);
-/* Output:
-<s>[INST] <<SYS>>
-You are a helpful assistant.
-<</SYS>>
-
-What is the capital of France? [/INST] The capital of France is Paris. </s><s>[INST] What is its population? [/INST] 
-*/
-
-string simplePrompt = PromptBuilder.Build(ChatFormat.Simple, messages);
-/* Output:
-system: You are a helpful assistant.
-user: What is the capital of France?
-assistant: The capital of France is Paris.
-user: What is its population?
-assistant:
-*/
-```
-
-Supported chat formats:
-- `Simple` - Basic role: content format (generic models, base models)
-- `ChatML` - OpenAI ChatML format (GPT models, models fine-tuned with ChatML) including Qwen
-- `Llama2` - Llama 2 instruction format (Llama-2-Chat models)
-- `Llama3` - Llama 3 format (Llama-3-Instruct models)
-- `Alpaca` - Alpaca instruction format (Alpaca, Vicuna, WizardLM, and many Llama-based fine-tunes)
-- `Mistral` - Mistral instruction format (Mistral-Instruct, Mixtral-Instruct models)
-- `HumanAssistant` - Human/Assistant format (Anthropic Claude-style training, some chat models)
-- `Zephyr` - Zephyr model format (Zephyr beta/alpha models)
-- `Phi` - Microsoft Phi format (Phi-2, Phi-3 models)
-- `DeepSeek` - DeepSeek format (DeepSeek-Coder, DeepSeek-LLM models)
-
-If you are unsure which your model supports, choose `Simple`.
-
-### Text Generation Formatting
+### Ollama Streaming
 
 ```csharp
-using SharpAI.Prompts;
-
-// Simple instruction
-string instructionPrompt = TextPromptBuilder.Build(
-    TextGenerationFormat.Instruction,
-    "Write a haiku about programming"
-);
-/* Output:
-### Instruction:
-Write a haiku about programming
-
-### Response:
-*/
-
-// Code generation with context
-var context = new Dictionary<string, string>
+// Streaming text completion
+var request = new OllamaGenerateCompletionRequest
 {
-    ["language"] = "python",
-    ["requirements"] = "Include error handling"
+    Model = "llama2",
+    Prompt = "Write a story about",
+    Options = new OllamaCompletionOptions
+    {
+        Temperature = 0.8f,
+        NumPredict = 200
+    }
 };
 
-string codePrompt = TextPromptBuilder.Build(
-    TextGenerationFormat.CodeGeneration,
-    "Write a function to parse JSON",
-    context
-);
-/* Output:
-Language: python
-Task: Write a function to parse JSON
-Requirements: Include error handling
-
-```python
-*/
-
-// Question-answer format
-string qaPrompt = TextPromptBuilder.Build(
-    TextGenerationFormat.QuestionAnswer,
-    "What causes rain?"
-);
-/* Output:
-Question: What causes rain?
-
-Answer:
-*/
-
-// Few-shot examples
-var examples = new List<(string input, string output)>
+Console.WriteLine("Streaming completion:");
+await foreach (var chunk in sdk.Ollama.GenerateCompletionStream(request))
 {
-    ("2+2", "4"),
-    ("5*3", "15")
+    Console.Write(chunk.Response);
+}
+
+// Streaming chat completion
+var chatRequest = new OllamaGenerateChatCompletionRequest
+{
+    Model = "llama2",
+    Messages = new List<OllamaChatMessage>
+    {
+        new OllamaChatMessage { Role = "user", Content = "Tell me a joke" }
+    },
+    Options = new OllamaCompletionOptions
+    {
+        Temperature = 0.7f,
+        NumPredict = 150
+    }
 };
 
-string fewShotPrompt = TextPromptBuilder.BuildWithExamples(
-    TextGenerationFormat.QuestionAnswer,
-    "7-3",
-    examples
-);
-/* Output:
-Examples:
-
-Question: 2+2
-
-Answer:
-4
-
----
-
-Question: 5*3
-
-Answer:
-15
-
----
-
-Now complete the following:
-
-Question: 7-3
-
-Answer:
-*/
+Console.WriteLine("Streaming chat:");
+await foreach (var chunk in sdk.Ollama.GenerateChatCompletionStream(chatRequest))
+{
+    Console.Write(chunk.Message?.Content);
+}
 ```
 
-Supported text generation formats:
-- `Raw` - No formatting
-- `Completion` - Continuation format
-- `Instruction` - Instruction/response format
-- `QuestionAnswer` - Q&A format
-- `CreativeWriting` - Story/creative format
-- `CodeGeneration` - Code generation format
-- `Academic` - Academic writing format
-- `ListGeneration` - List creation format
-- `TemplateFilling` - Template completion
-- `Dialogue` - Dialogue generation
+### OpenAI Streaming
 
-## 🌐 API Server
+```csharp
+// Streaming text completion
+var request = new OpenAIGenerateCompletionRequest
+{
+    Model = "llama2",
+    Prompt = "Write a story about",
+    MaxTokens = 200,
+    Temperature = 0.8f
+};
 
-SharpAI includes a fully-functional REST API server through the **SharpAI.Server** project, which provides Ollama-compatible endpoints. The server acts and behaves like Ollama (with minor gaps), allowing you to use existing Ollama clients and integrations with SharpAI.
+Console.WriteLine("Streaming completion:");
+await foreach (var chunk in sdk.OpenAI.GenerateCompletionStreamAsync(request))
+{
+    Console.Write(chunk?.Choices?[0]?.Text);
+}
 
-Ollama API endpoints include:
-- `/api/generate` - Text generation
-- `/api/chat` - Chat completions
-- `/api/embed` - Generate embeddings
-- `/api/tags` - List available models
-- `/api/pull` - Download models from HuggingFace
+// Streaming chat completion
+var chatRequest = new OpenAIGenerateChatCompletionRequest
+{
+    Model = "llama2",
+    Messages = new List<OpenAIChatMessage>
+    {
+        new OpenAIChatMessage { Role = "user", Content = "Tell me a joke" }
+    },
+    MaxTokens = 150,
+    Temperature = 0.7f
+};
 
-OpenAI API endpoints include:
-- `/v1/embeddings` - Generate embeddings
-- `/v1/completions` - Text generation
-- `/v1/chat/completions` - Chat completions
+Console.WriteLine("Streaming chat:");
+await foreach (var chunk in sdk.OpenAI.GenerateChatCompletionStreamAsync(chatRequest))
+{
+    Console.Write(chunk?.Choices?[0]?.Text);
+}
+```
+
+## ⚠️ Error Handling
+
+The SDK handles errors gracefully and returns null for failed operations:
+
+```csharp
+try
+{
+    var result = await sdk.Ollama.GenerateCompletion(request);
+    
+    if (result == null)
+    {
+        Console.WriteLine("Failed to generate completion or no result received");
+    }
+    else
+    {
+        Console.WriteLine($"Success: {result.Response}");
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Error: {ex.Message}");
+}
+```
+
+## ⚙️ Configuration
+
+### Timeout Configuration
+
+```csharp
+var sdk = new SharpAISdk("http://localhost:8000");
+sdk.TimeoutMs = 120000; // 2 minutes
+```
+
+### Logging Configuration
+
+```csharp
+var sdk = new SharpAISdk("http://localhost:8000");
+sdk.LogRequests = true;
+sdk.LogResponses = true;
+sdk.Logger = (level, message) => 
+{
+    // Custom logging implementation
+    File.AppendAllText("sdk.log", $"[{DateTime.UtcNow}] [{level}] {message}\n");
+};
+```
 
 ## ⚙️ Requirements
 
@@ -412,240 +508,23 @@ OpenAI API endpoints include:
 **Minimum:**
 - **OS**: Windows 10+, macOS 12+, or Linux (Ubuntu 20.04+, Debian 11+)
 - **.NET**: 8.0 or higher
-- **RAM**: Minimum 8GB of RAM recommended, have enough RAM for running models if using CPU
-- **Disk**: 20GB+ of disk space recommended, have enough capacity for downloaded models
+- **SharpAI Server**: Running SharpAI server instance
+
+**SharpAI Server Requirements:**
+- **RAM**: Minimum 8GB of RAM recommended
+- **Disk**: 20GB+ of disk space for models
 - **Internet**: Required for downloading models
 - **HuggingFace API Key**: Required (free at https://huggingface.co/settings/tokens)
 
-**For GPU Acceleration (Optional):**
-- **NVIDIA GPU only** with Compute Capability 6.0+ (Pascal or newer)
-- 8GB+ VRAM (16GB+ for larger models)
-- NVIDIA proprietary drivers installed
-- CUDA Toolkit 12.x (for bare-metal deployments)
-- NVIDIA Container Toolkit (for Docker deployments)
+### Dependencies
 
-**Important GPU Notes:**
-- **NVIDIA GPUs only** - AMD and Intel GPUs are not supported
-- **Apple Silicon (M1/M2/M3/M4)** - GPU acceleration (Metal) is not supported, CPU mode only
-- **Legacy Intel Macs** - NVIDIA GPUs are rare but supported if present
+- **SharpAI**: Core SharpAI library (v1.0.14+)
+- **RestWrapper**: HTTP client wrapper (v3.1.8+)
+- **System.Text.Json**: JSON serialization (v9.0.9+)
 
-### Tested Platforms
-
-SharpAI has been tested on:
-- Windows 11 (x64)
-- macOS Sequoia (Apple Silicon - CPU only)
-- Ubuntu 24.04 LTS (x64)
-
-### Full Deployment Guide
-
-For detailed installation instructions, troubleshooting, and production deployment, see **[DEPLOYMENT-GUIDE.md](DEPLOYMENT-GUIDE.md)**.
-
-## 📊 Model Information
-
-When models are downloaded, the following information is tracked:
-
-- Model name and unique GUID
-- File size
-- MD5, SHA1, and SHA256 hashes
-- Quantization type (e.g., Q4_K_M, Q5_K_S)
-- Source URL from HuggingFace
-- Download and creation timestamps
-
-## 🔧 Configuration
-
-### Directory Structure
-
-Models are stored in the specified `modelDirectory` with files named by their GUID. Model metadata is stored in the SQLite database specified by `databaseFilename`.
-
-### GPU Support
-
-SharpAI automatically detects NVIDIA CUDA availability and optimizes layer allocation. The library supports **NVIDIA GPUs only**.
-
-**Supported:**
-- **NVIDIA GPUs** via CUDA (Windows and Linux)
-
-**Not Supported:**
-- AMD GPUs (ROCm/Vulkan not supported)
-- Apple Silicon Metal (M1/M2/M3/M4 - CPU only)
-- Intel GPUs (SYCL/Vulkan not supported)
-
-The `NativeLibraryBootstrapper` automatically detects your platform and GPU at startup, selecting the appropriate backend (CPU or CUDA). See the [Requirements](#-requirements) section for detailed GPU requirements.
-
-## 🐳 Running in Docker
-
-SharpAI.Server is available as a Docker image, providing an easy way to deploy the Ollama-compatible API server without local installation.
-
-### Quick Start
-
-#### Using Docker Run
-
-For Windows:
-```batch
-run.bat v1.0.0
-```
-
-For Linux/macOS:
-```bash
-./run.sh v1.0.0
-```
-
-#### Using Docker Compose
-
-For Windows:
-```batch
-compose-up.bat
-```
-
-For Linux/macOS:
-```bash
-./compose-up.sh
-```
-
-### Prerequisites
-
-Before running the Docker container, ensure you have:
-
-1. **Configuration file**: Create a `sharpai.json` configuration file in your working directory
-2. **Directory structure**: The container expects the following directories to exist:
-   - `./logs/` - For application logs
-   - `./models/` - For storing downloaded GGUF models
-
-### Docker Image
-
-The official Docker image is available at: [`jchristn/sharpai`](https://hub.docker.com/r/jchristn/sharpai).  Refer to the `docker` directory for assets useful for running in Docker and Docker Compose.
-
-### Volume Mappings
-
-The container uses several volume mappings for persistence:
-
-| Host Path | Container Path | Description |
-|-----------|---------------|-------------|
-| `./sharpai.json` | `/app/sharpai.json` | Configuration file |
-| `./sharpai.db` | `/app/sharpai.db` | SQLite database for model registry |
-| `./logs/` | `/app/logs/` | Application logs |
-| `./models/` | `/app/models/` | Downloaded GGUF model files |
-
-### Configuration
-
-Modify the `sharpai.json` file to supply your configuration.
-
-### Networking
-
-The container exposes port 8000 by default. 
-
-You can access Ollama APIs at:
-- `http://localhost:8000/api/tags` - List available models
-- `http://localhost:8000/api/pull` - Pull a model
-- `http://localhost:8000/api/generate` - Generate text
-- `http://localhost:8000/api/chat` - Chat completions
-- `http://localhost:8000/api/embed` - Generate embeddings
-
-You can access OpenAI APIs at:
-- `http://localhost:8000/v1/embeddings` - Generate embeddings
-- `http://localhost:8000/v1/completions` - Generate text
-- `http://localhost:8000/v1/chat/completions` - Chat completions
-
-### Example Usage
-
-1. Create the required directory structure:
-   ```bash
-   mkdir logs models
-   ```
-
-2. Create your `sharpai.json` configuration file
-
-3. Run the container:
-   ```bash
-   # Windows
-   run.bat v1.0.0
-   
-   # Linux/macOS
-   ./run.sh v1.0.0
-   ```
-
-4. Download a model using the API (GGUF format required):
-   ```bash
-   curl http://localhost:8000/api/pull \
-     -d '{"model":"QuantFactory/Qwen2.5-3B-GGUF"}'
-   ```
-
-5. Generate text:
-   ```bash
-   curl http://localhost:8000/api/generate \
-     -d '{
-       "model": "QuantFactory/Qwen2.5-3B-GGUF",
-       "prompt": "Why is the sky blue?",
-       "stream": false
-     }'
-   ```
-
-### Docker Compose
-
-For production deployments, you can use Docker Compose. Create a `compose.yaml` file:
-
-```yaml
-services:
-  sharpai:
-    image: jchristn/sharpai:v1.0.0
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./sharpai.json:/app/sharpai.json
-      - ./sharpai.db:/app/sharpai.db
-      - ./logs:/app/logs
-      - ./models:/app/models
-    environment:
-      - TERM=xterm-256color
-    restart: unless-stopped
-```
-
-Then run:
-```bash
-docker compose up -d
-```
-
-### GPU Support in Docker
-
-To enable GPU acceleration in Docker:
-
-#### NVIDIA GPUs
-Install the [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html) and modify your run command:
-
-```bash
-docker run --gpus all \
-  -p 8000:8000 \
-  -v ./sharpai.json:/app/sharpai.json \
-  -v ./sharpai.db:/app/sharpai.db \
-  -v ./logs:/app/logs \
-  -v ./models:/app/models \
-  jchristn/sharpai:v1.0.0
-```
-
-For Docker Compose, add:
-```yaml
-services:
-  sharpai:
-    # ... other configuration ...
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
-```
-
-### Troubleshooting
-
-- **Container exits immediately**: Check that `sharpai.json` exists and is valid JSON
-- **Models not persisting**: Ensure the `./models/` directory has proper write permissions
-- **Cannot connect to API**: Verify port 8000 is not already in use and firewall rules allow access
-- **Out of memory errors**: Large models may require significant RAM. Consider using quantized models or adjusting Docker memory limits
-## 📚 Version History
+## 📊 Version History
 
 Please see the [CHANGELOG.md](CHANGELOG.md) file for detailed version history and release notes.
-
-Have a bug, feature request, or idea? Please [file an issue](https://github.com/yourusername/sharpai/issues) on our GitHub repository. We welcome community input on our roadmap!
 
 ## 📄 License
 
@@ -653,7 +532,15 @@ This project is licensed under the MIT License.
 
 ## 🙏 Acknowledgments
 
-- Built on [LlamaSharp](https://github.com/SciSharp/LLamaSharp) for GGUF model inference
-- Model hosting by [HuggingFace](https://huggingface.co/)
-- Inspired by (and forever grateful to) [Ollama](https://ollama.ai/) for API compatibility
-- Special thanks to the community of developers that helped build, test, and refine SharpAI
+- Built on [SharpAI](https://github.com/jchristn/sharpai) for local AI inference
+- Compatible with [Ollama](https://ollama.ai/) API standards
+- Compatible with [OpenAI](https://openai.com/) API standards
+
+## 🔗 Related Projects
+
+- [SharpAI](https://github.com/jchristn/sharpai) - The core SharpAI library and server
+- [RestWrapper](https://github.com/jchristn/RestWrapper) - HTTP client wrapper library
+
+---
+
+**Have a bug, feature request, or idea?** Please [file an issue](https://github.com/jchristn/sharpai/issues) on our GitHub repository. We welcome community input on our roadmap!
