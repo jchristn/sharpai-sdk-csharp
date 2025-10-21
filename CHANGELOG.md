@@ -4,47 +4,41 @@
 
 v1.0.0
 
-- Initial release
-- Core AI inference engine based on LlamaSharp
-- Support for GGUF model format exclusively
-- Model management with automatic download from HuggingFace
-  - Automatic GGUF file discovery and selection
-  - Intelligent quantization selection based on Ollama preferences
-  - SQLite-based model registry with metadata tracking
-  - Model file hashing (MD5, SHA1, SHA256)
-- Embedding generation capabilities
-  - Single text embedding generation
-  - Batch embedding generation for multiple texts
-  - Automatic dimension detection
-- Text completion support
-  - Non-streaming completions with customizable parameters
-  - Streaming completions with async enumerable support
-  - Temperature and max token controls
-- Chat completion functionality
-  - Non-streaming chat responses
-  - Streaming chat responses
-  - Support for conversation history in prompts
-- Comprehensive prompt formatting system
-  - 10 different chat formats (Simple, ChatML, Llama2, Llama3, Alpaca, Mistral, HumanAssistant, Zephyr, Phi, DeepSeek)
-  - 10 text generation formats (Raw, Completion, Instruction, QuestionAnswer, CreativeWriting, CodeGeneration, Academic, ListGeneration, TemplateFilling, Dialogue)
-  - Few-shot learning support with examples
-  - Context-aware prompt building
-- GPU acceleration support via LlamaSharp
-  - Automatic CUDA detection and optimization
-  - Support for NVIDIA (CUDA), AMD (ROCm/Vulkan), Apple Silicon (Metal), Intel (SYCL/Vulkan)
-  - Automatic GPU layer allocation
-- Platform support
-  - Tested on Windows 11, macOS Sequoia, Ubuntu 24.04
-  - Minimum .NET 8.0 requirement
-- SharpAI.Server project included
-  - Ollama-compatible REST API endpoints
-  - OpenAI-compatible REST API endpoints
+- Initial release of SharpAI SDK
+- C# SDK for interacting with SharpAI server
+- Support for both Ollama and OpenAI compatible API endpoints
+- Model management capabilities
+  - Pull models with streaming progress updates
+  - List local models
+  - Delete models
+- AI Operations (Ollama API)
+  - Text completion (non-streaming and streaming)
+  - Chat completion (non-streaming and streaming)
+  - Embeddings generation (single and multiple texts)
+- AI Operations (OpenAI API)
+  - Text completion (non-streaming and streaming)
+  - Chat completion (non-streaming and streaming)
+  - Embeddings generation (single and multiple texts)
+- HTTP client functionality
+  - GET, POST, DELETE request support
+  - Streaming response handling
+  - Chunked transfer encoding support
+  - Configurable timeouts and logging
+- JSON serialization
+  - Built-in JSON serialization with customizable options
+  - Support for enum string conversion
+  - Case-insensitive property matching
+- Logging and debugging
+  - Request/response logging
+  - Custom logger support
+  - Debug mode for detailed output
 - Dependencies
-  - LlamaSharp for model inference
-  - SyslogLogging for flexible logging
-  - Watson.ORM.Sqlite for model registry
-  - SwiftStack for the application platform
-  - RestWrapper for HuggingFace API integration
+  - SharpAI (1.0.14) - Core SharpAI functionality
+  - RestWrapper (3.1.8) - HTTP client wrapper
+  - System.Text.Json (9.0.9) - JSON serialization
+- Platform support
+  - .NET 8.0 minimum requirement
+  - Cross-platform compatibility
 
 ## Previous Versions
 
