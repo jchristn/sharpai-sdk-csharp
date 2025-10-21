@@ -1,12 +1,12 @@
 namespace SharpAI.Sdk.Implementations
 {
-    using RestWrapper;
-    using SharpAI.Models.OpenAI;
-    using SharpAI.Sdk.Interfaces;
     using System.Collections.Generic;
     using System.Text;
     using System.Text.Json;
     using System.Threading;
+    using RestWrapper;
+    using SharpAI.Models.OpenAI;
+    using SharpAI.Sdk.Interfaces;
 
     /// <summary>
     /// Implementation of OpenAI API methods using RestWrapper.

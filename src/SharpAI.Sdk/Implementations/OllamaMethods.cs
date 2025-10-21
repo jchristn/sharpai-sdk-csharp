@@ -1,11 +1,11 @@
 namespace SharpAI.Sdk.Implementations
 {
+    using System.Text;
+    using System.Text.Json;
     using RestWrapper;
     using SharpAI.Models.Ollama;
     using SharpAI.Sdk.Interfaces;
     using SharpAI.Sdk.Models;
-    using System.Text;
-    using System.Text.Json;
 
     /// <summary>
     /// Implementation of Ollama API methods.

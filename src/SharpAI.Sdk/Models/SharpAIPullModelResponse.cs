@@ -1,7 +1,7 @@
-using System.Text.Json.Serialization;
-
 namespace SharpAI.Sdk.Models
 {
+    using System.Text.Json.Serialization;
+
     /// <summary>
     /// SharpAI server pull model response message.
     /// </summary>

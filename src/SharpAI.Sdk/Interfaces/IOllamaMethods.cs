@@ -1,7 +1,6 @@
 namespace SharpAI.Sdk.Interfaces
 {
     using SharpAI.Models.Ollama;
-    using SharpAI.Models.OpenAI;
     using SharpAI.Sdk.Models;
 
     /// <summary>

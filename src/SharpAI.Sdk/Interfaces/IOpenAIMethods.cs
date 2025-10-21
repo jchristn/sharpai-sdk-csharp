@@ -1,11 +1,7 @@
-using SharpAI.Models.OpenAI;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-
 namespace SharpAI.Sdk.Interfaces
 {
+    using SharpAI.Models.OpenAI;
+
     /// <summary>
     /// Interface for OpenAI API methods.
     /// </summary>
