@@ -21,6 +21,8 @@ namespace Test.Automated.Tests
 
             InitializeTestEnvironment();
 
+            #region OpenAI-Streaming-Chat-Completions
+
             // Test streaming chat completions
             ApiDetails streamingChatCompletions = CreateApiDetails("OpenAI Streaming Chat Completions");
             try
@@ -52,6 +54,8 @@ namespace Test.Automated.Tests
                 CompleteApiDetails(streamingChatCompletions, ex.Message, 500);
                 result.ApiDetails.Add(streamingChatCompletions);
             }
+
+            #endregion
 
             result.EndUtc = DateTime.UtcNow;
         }

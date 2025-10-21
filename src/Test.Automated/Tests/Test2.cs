@@ -21,6 +21,8 @@ namespace Test.Automated.Tests
 
             InitializeTestEnvironment();
 
+            #region List-Models
+
             // List local models
             ApiDetails listModels = CreateApiDetails("List Local Models");
             try
@@ -47,6 +49,8 @@ namespace Test.Automated.Tests
                 CompleteApiDetails(listModels, ex.Message, 500);
                 result.ApiDetails.Add(listModels);
             }
+
+            #endregion
 
             result.EndUtc = DateTime.UtcNow;
         }

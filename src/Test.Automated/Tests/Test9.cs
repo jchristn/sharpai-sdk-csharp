@@ -21,6 +21,8 @@ namespace Test.Automated.Tests
 
             InitializeTestEnvironment();
 
+            #region Invalid-Embeddings-Model
+
             // Test invalid embeddings model
             ApiDetails invalidEmbeddings = CreateApiDetails("Invalid Embeddings Model");
             try
@@ -46,7 +48,9 @@ namespace Test.Automated.Tests
                 result.ApiDetails.Add(invalidEmbeddings);
             }
 
-            // Test invalid completions model
+            #endregion
+
+            #region Invalid-Completions-Model
             ApiDetails invalidCompletions = CreateApiDetails("Invalid Completions Model");
             try
             {
@@ -71,7 +75,9 @@ namespace Test.Automated.Tests
                 result.ApiDetails.Add(invalidCompletions);
             }
 
-            // Test invalid OpenAI model
+            #endregion
+
+            #region Invalid-OpenAI-Model
             ApiDetails invalidOpenAI = CreateApiDetails("Invalid OpenAI Model");
             try
             {
@@ -95,6 +101,8 @@ namespace Test.Automated.Tests
                 CompleteApiDetails(invalidOpenAI, ex.Message, 500);
                 result.ApiDetails.Add(invalidOpenAI);
             }
+
+            #endregion
 
             result.EndUtc = DateTime.UtcNow;
         }

@@ -21,6 +21,8 @@ namespace Test.Automated.Tests
 
             InitializeTestEnvironment();
 
+            #region Embeddings
+
             // Test single embeddings
             ApiDetails singleEmbeddings = CreateApiDetails("Single Embeddings");
             try
@@ -93,7 +95,9 @@ namespace Test.Automated.Tests
                 result.ApiDetails.Add(multiEmbeddings);
             }
 
-            // Test completions
+            #endregion
+
+            #region Completions
             ApiDetails completions = CreateApiDetails("Completions");
             try
             {
@@ -165,6 +169,8 @@ namespace Test.Automated.Tests
                 CompleteApiDetails(chatCompletions, ex.Message, 500);
                 result.ApiDetails.Add(chatCompletions);
             }
+
+            #endregion
 
             result.EndUtc = DateTime.UtcNow;
         }

@@ -13,6 +13,8 @@ namespace Test.Automated
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
 #pragma warning disable CS8603 // Possible null reference return.
 
+        #region Ollama-Request-Creation
+
         /// <summary>
         /// Create Ollama embeddings request for single input.
         /// </summary>
@@ -44,6 +46,10 @@ namespace Test.Automated
             request.SetInputs(inputs);
             return request;
         }
+
+        #endregion
+
+        #region OpenAI-Request-Creation
 
         /// <summary>
         /// Create OpenAI embeddings request for single input.
@@ -320,6 +326,10 @@ namespace Test.Automated
             }
         }
 
+        #endregion
+
+        #region Internal-Methods
+
         /// <summary>
         /// Validate embeddings result.
         /// </summary>
@@ -391,6 +401,8 @@ namespace Test.Automated
             if (result.Choices == null || result.Choices.Count == 0) return false;
             return result.Choices[0].Message?.Content != null;
         }
+
+        #endregion
 
 #pragma warning restore CS8603 // Possible null reference return.
 #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.

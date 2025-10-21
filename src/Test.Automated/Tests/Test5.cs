@@ -21,6 +21,8 @@ namespace Test.Automated.Tests
 
             InitializeTestEnvironment();
 
+            #region OpenAI-Completions
+
             // Test OpenAI completion
             ApiDetails completions = CreateApiDetails("OpenAI Completion");
             try
@@ -46,7 +48,9 @@ namespace Test.Automated.Tests
                 result.ApiDetails.Add(completions);
             }
 
-            // Test OpenAI chat completion
+            #endregion
+
+            #region OpenAI-Chat-Completions
             ApiDetails chatCompletions = CreateApiDetails("OpenAI Chat Completion");
             try
             {
@@ -71,6 +75,8 @@ namespace Test.Automated.Tests
                 CompleteApiDetails(chatCompletions, ex.Message, 500);
                 result.ApiDetails.Add(chatCompletions);
             }
+
+            #endregion
 
             result.EndUtc = DateTime.UtcNow;
         }

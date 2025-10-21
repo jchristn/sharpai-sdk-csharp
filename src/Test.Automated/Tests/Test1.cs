@@ -22,6 +22,8 @@ namespace Test.Automated.Tests
 
             InitializeTestEnvironment();
 
+            #region Pull-Models
+
             // Pull embeddings model
             ApiDetails pullEmbeddingsModel = CreateApiDetails("Pull Embeddings Model");
             try
@@ -159,6 +161,8 @@ namespace Test.Automated.Tests
                     result.ApiDetails.Add(pullChatCompletionsModel);
                 }
             }
+
+            #endregion
 
             result.EndUtc = DateTime.UtcNow;
         }

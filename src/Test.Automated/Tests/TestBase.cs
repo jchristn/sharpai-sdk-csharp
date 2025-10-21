@@ -12,6 +12,8 @@ namespace Test.Automated.Tests
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
 
+        #region Public-Members
+
         /// <summary>
         /// Name of the test.
         /// </summary>
@@ -33,7 +35,7 @@ namespace Test.Automated.Tests
         /// <summary>
         /// SharpAI SDK instance.
         /// </summary>
-        public SharpAISdk   SharpAISdk
+        public SharpAISdk SharpAISdk
         {
             get => _SharpAISdk;
             set => _SharpAISdk = (value != null ? value : throw new ArgumentNullException(nameof(SharpAISdk)));
@@ -43,12 +45,20 @@ namespace Test.Automated.Tests
         private TestEnvironment _TestEnvironment = new TestEnvironment();
         private SharpAISdk _SharpAISdk = null;
 
+        #endregion
+
+        #region Abstract-Methods
+
         /// <summary>
         /// Run the test.
         /// </summary>
         /// <param name="result">Test result.</param>
         /// <returns>Task.</returns>
         public abstract Task Run(TestResult result);
+
+        #endregion
+
+        #region Public-Methods
 
         /// <summary>
         /// Initialize the test environment.
@@ -57,7 +67,7 @@ namespace Test.Automated.Tests
         public void InitializeTestEnvironment()
         {
             string endpoint = $"http://{TestEnvironment.SharpAIHostname}:{TestEnvironment.SharpAIPort}";
-            
+
             SharpAISdk = new SharpAISdk(endpoint)
             {
                 LogRequests = TestEnvironment.LogRequests,
@@ -78,6 +88,10 @@ namespace Test.Automated.Tests
                 Console.WriteLine($"[{level}] {message}");
             }
         }
+
+        #endregion
+
+        #region Protected-Methods
 
         /// <summary>
         /// Create API details for tracking.
@@ -162,6 +176,8 @@ namespace Test.Automated.Tests
             }
             return true;
         }
+
+        #endregion
 
 #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.

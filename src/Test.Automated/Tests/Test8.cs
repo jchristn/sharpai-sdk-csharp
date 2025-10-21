@@ -22,6 +22,8 @@ namespace Test.Automated.Tests
 
             InitializeTestEnvironment();
 
+            #region Single-Embeddings
+
             // Test single embeddings
             ApiDetails singleEmbeddings = CreateApiDetails("OpenAI Single Embeddings");
             try
@@ -47,7 +49,9 @@ namespace Test.Automated.Tests
                 result.ApiDetails.Add(singleEmbeddings);
             }
 
-            // Test multiple embeddings
+            #endregion
+
+            #region Multiple-Embeddings
             ApiDetails multiEmbeddings = CreateApiDetails("OpenAI Multiple Embeddings");
             try
             {
@@ -72,6 +76,8 @@ namespace Test.Automated.Tests
                 CompleteApiDetails(multiEmbeddings, ex.Message, 500);
                 result.ApiDetails.Add(multiEmbeddings);
             }
+
+            #endregion
 
             result.EndUtc = DateTime.UtcNow;
         }

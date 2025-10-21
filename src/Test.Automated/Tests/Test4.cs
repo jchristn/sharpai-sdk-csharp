@@ -21,6 +21,8 @@ namespace Test.Automated.Tests
 
             InitializeTestEnvironment();
 
+            #region Streaming-Completions
+
             ApiDetails streamingCompletions = CreateApiDetails("Streaming Completions");
             try
             {
@@ -86,6 +88,8 @@ namespace Test.Automated.Tests
                 CompleteApiDetails(streamingChatCompletions, ex.Message, 500);
                 result.ApiDetails.Add(streamingChatCompletions);
             }
+
+            #endregion
 
             result.EndUtc = DateTime.UtcNow;
 
