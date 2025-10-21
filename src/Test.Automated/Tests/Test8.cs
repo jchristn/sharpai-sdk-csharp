@@ -52,6 +52,7 @@ namespace Test.Automated.Tests
             #endregion
 
             #region Multiple-Embeddings
+
             ApiDetails multiEmbeddings = CreateApiDetails("OpenAI Multiple Embeddings");
             try
             {
