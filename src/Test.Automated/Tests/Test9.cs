@@ -51,6 +51,7 @@ namespace Test.Automated.Tests
             #endregion
 
             #region Invalid-Completions-Model
+
             ApiDetails invalidCompletions = CreateApiDetails("Invalid Completions Model");
             try
             {
@@ -78,6 +79,7 @@ namespace Test.Automated.Tests
             #endregion
 
             #region Invalid-OpenAI-Model
+
             ApiDetails invalidOpenAI = CreateApiDetails("Invalid OpenAI Model");
             try
             {
