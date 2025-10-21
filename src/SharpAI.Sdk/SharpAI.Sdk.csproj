@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net8.0</TargetFrameworks>
+		<LangVersion>latest</LangVersion>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageId>SharpAI.Sdk</PackageId>
+		<Version>1.0.0</Version>
+		<Authors>SharpAI Team</Authors>
+		<Description>C# SDK for SharpAI - Local AI inference with Ollama and OpenAI compatible APIs</Description>
+		<PackageProjectUrl>https://github.com/jchristn/sharpai</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/jchristn/sharpai</RepositoryUrl>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageTags>ai;sharpai;ollama;openai;llm;chat;completion;embeddings;local;inference</PackageTags>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<DocumentationFile>SharpAI.Sdk.xml</DocumentationFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="SharpAI" Version="1.0.14" />
+		<PackageReference Include="RestWrapper" Version="3.1.8" />
+		<PackageReference Include="System.Text.Json" Version="9.0.9" />
+	</ItemGroup>
+</Project>
