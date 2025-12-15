@@ -56,7 +56,7 @@ namespace SharpAI.Sdk.Implementations
                         if (resp.StatusCode >= 200 && resp.StatusCode <= 299)
                         {
                             if (_Sdk.LogResponses)
-                                _Sdk.Log("DEBUG", $"Success from {url}: {resp.StatusCode}, {resp.ContentLength} bytes");
+                                _Sdk.Log("DEBUG", $"Success from {url}: {resp.StatusCode}, {resp.ContentLength ?? 0} bytes");
 
                             if (resp.ChunkedTransferEncoding)
                             {
@@ -125,7 +125,7 @@ namespace SharpAI.Sdk.Implementations
                         }
                         else
                         {
-                            _Sdk.Log("WARN", $"Non-success from {url}: {resp.StatusCode}, {resp.ContentLength} bytes");
+                            _Sdk.Log("WARN", $"Non-success from {url}: {resp.StatusCode}, {resp.ContentLength ?? 0} bytes");
                             string? responseData = await _Sdk.ReadResponse(resp, cancellationToken);
                             if (!string.IsNullOrEmpty(responseData))
                             {
@@ -229,7 +229,7 @@ namespace SharpAI.Sdk.Implementations
 
                         if (resp.StatusCode >= 200 && resp.StatusCode <= 299)
                         {
-                            _Sdk.Log("DEBUG", $"Success from {url}: {resp.StatusCode}, {resp.ContentLength} bytes");
+                            _Sdk.Log("DEBUG", $"Success from {url}: {resp.StatusCode}, {resp.ContentLength ?? 0} bytes");
 
                             if (!string.IsNullOrEmpty(responseData))
                             {
@@ -244,7 +244,7 @@ namespace SharpAI.Sdk.Implementations
                         }
                         else
                         {
-                            _Sdk.Log("WARN", $"Non-success from {url}: {resp.StatusCode}, {resp.ContentLength} bytes");
+                            _Sdk.Log("WARN", $"Non-success from {url}: {resp.StatusCode}, {resp.ContentLength ?? 0} bytes");
                             return null;
                         }
                     }
@@ -256,7 +256,6 @@ namespace SharpAI.Sdk.Implementations
                 }
             }
         }
-
 
         /// <inheritdoc />
         public async Task<OllamaGenerateCompletionResult?> GenerateCompletion(OllamaGenerateCompletionRequest request, CancellationToken cancellationToken = default)

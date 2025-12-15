@@ -179,7 +179,7 @@ namespace SharpAI.Sdk
 
                         if (resp.StatusCode >= 200 && resp.StatusCode <= 299)
                         {
-                            Log("DEBUG", $"Success from {url}: {resp.StatusCode}, {resp.ContentLength} bytes");
+                            Log("DEBUG", $"Success from {url}: {resp.StatusCode}, {resp.ContentLength ?? 0} bytes");
                             
                             if (!string.IsNullOrEmpty(responseData))
                             {
@@ -194,7 +194,7 @@ namespace SharpAI.Sdk
                         }
                         else
                         {
-                            Log("WARN", $"Non-success from {url}: {resp.StatusCode}, {resp.ContentLength} bytes");
+                            Log("WARN", $"Non-success from {url}: {resp.StatusCode}, {resp.ContentLength ?? 0} bytes");
                             return default(T);
                         }
                     }
@@ -237,7 +237,7 @@ namespace SharpAI.Sdk
 
                         if (resp.StatusCode >= 200 && resp.StatusCode <= 299)
                         {
-                            Log("DEBUG", $"Success from {url}: {resp.StatusCode}, {resp.ContentLength} bytes");
+                            Log("DEBUG", $"Success from {url}: {resp.StatusCode}, {resp.ContentLength ?? 0} bytes");
 
                             if (!string.IsNullOrEmpty(responseData))
                             {
@@ -252,7 +252,7 @@ namespace SharpAI.Sdk
                         }
                         else
                         {
-                            Log("WARN", $"Non-success from {url}: {resp.StatusCode}, {resp.ContentLength} bytes");
+                            Log("WARN", $"Non-success from {url}: {resp.StatusCode}, {resp.ContentLength ?? 0} bytes");
                             return default(T);
                         }
                     }
@@ -303,7 +303,7 @@ namespace SharpAI.Sdk
 
                         if (resp.StatusCode >= 200 && resp.StatusCode <= 299)
                         {
-                            Log("DEBUG", $"Success from {url}: {resp.StatusCode}, {resp.ContentLength} bytes");
+                            Log("DEBUG", $"Success from {url}: {resp.StatusCode}, {resp.ContentLength ?? 0} bytes");
 
                             if (!string.IsNullOrEmpty(responseData))
                             {
@@ -318,7 +318,7 @@ namespace SharpAI.Sdk
                         }
                         else
                         {
-                            Log("WARN", $"Non-success from {url}: {resp.StatusCode}, {resp.ContentLength} bytes");
+                            Log("WARN", $"Non-success from {url}: {resp.StatusCode}, {resp.ContentLength ?? 0} bytes");
                             return default(T);
                         }
                     }
@@ -367,12 +367,12 @@ namespace SharpAI.Sdk
 
                         if (resp.StatusCode >= 200 && resp.StatusCode <= 299)
                         {
-                            Log("DEBUG", $"Success from {url}: {resp.StatusCode}, {resp.ContentLength} bytes");
+                            Log("DEBUG", $"Success from {url}: {resp.StatusCode}, {resp.ContentLength ?? 0} bytes");
                             return responseData;
                         }
                         else
                         {
-                            Log("WARN", $"Non-success from {url}: {resp.StatusCode}, {resp.ContentLength} bytes");
+                            Log("WARN", $"Non-success from {url}: {resp.StatusCode}, {resp.ContentLength ?? 0} bytes");
                             return null;
                         }
                     }
@@ -414,12 +414,12 @@ namespace SharpAI.Sdk
 
                         if (resp.StatusCode >= 200 && resp.StatusCode <= 299)
                         {
-                            Log("DEBUG", $"Success from {url}: {resp.StatusCode}, {resp.ContentLength} bytes");
+                            Log("DEBUG", $"Success from {url}: {resp.StatusCode}, {resp.ContentLength ?? 0} bytes");
                             return responseData;
                         }
                         else
                         {
-                            Log("WARN", $"Non-success from {url}: {resp.StatusCode}, {resp.ContentLength} bytes");
+                            Log("WARN", $"Non-success from {url}: {resp.StatusCode}, {resp.ContentLength ?? 0} bytes");
                             return null;
                         }
                     }
@@ -508,7 +508,7 @@ namespace SharpAI.Sdk
                         if (resp.StatusCode >= 200 && resp.StatusCode <= 299)
                         {
                             if (LogResponses)
-                                Log("DEBUG", $"Success from {url}: {resp.StatusCode}, {resp.ContentLength} bytes");
+                                Log("DEBUG", $"Success from {url}: {resp.StatusCode}, {resp.ContentLength ?? 0} bytes");
 
                             if (resp.ChunkedTransferEncoding)
                             {
@@ -580,7 +580,7 @@ namespace SharpAI.Sdk
                         }
                         else
                         {
-                            Log("WARN", $"Non-success from {url}: {resp.StatusCode}, {resp.ContentLength} bytes");
+                            Log("WARN", $"Non-success from {url}: {resp.StatusCode}, {resp.ContentLength ?? 0} bytes");
                         }
                     }
                     else
